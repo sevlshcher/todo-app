@@ -2,13 +2,25 @@ import React, { useState } from "react";
 import List from "../List";
 import Badge from "../Badge";
 
+import DB from "../../assets/db.json";
 import closeIcon from "../../assets/img/close.svg";
 
 import "./AddList.scss";
 
-const AddList = ({ colors }) => {
+const AddList = ({ colors, onAdd }) => {
   const [visiblePopup, setVisiblePopup] = useState(false);
   const [selectedColor, selectColor] = useState(colors[0].id);
+  const [inputValue, setInputValue] = useState("");
+
+  const handleSubmit = () => {
+    if (!inputValue) {
+      return;
+    }
+
+    const color = DB.colors.find(color => color.id === selectedColor).name;
+
+    onAdd({ id: Math.random(), name: inputValue, colorId: selectedColor, color });
+  };
 
   return (
     <div className="add-list">
@@ -53,7 +65,13 @@ const AddList = ({ colors }) => {
             alt="Close button"
             className="add-list__popup-close-btn"
           />
-          <input className="field" type="text" placeholder="Название списка" />
+          <input
+            onChange={e => setInputValue(e.target.value)}
+            value={inputValue}
+            className="field"
+            type="text"
+            placeholder="Название списка"
+          />
           <div className="add-list__popup-colors">
             {colors.map(color => (
               <Badge
@@ -64,7 +82,9 @@ const AddList = ({ colors }) => {
               />
             ))}
           </div>
-          <button className="btn">Добавить</button>
+          <button onClick={handleSubmit} className="btn">
+            Добавить
+          </button>
         </div>
       )}
     </div>
